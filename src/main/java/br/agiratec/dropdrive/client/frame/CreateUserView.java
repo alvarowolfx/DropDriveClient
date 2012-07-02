@@ -20,12 +20,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import br.agiratec.dropdrive.client.application.ClientCommunicator;
+import br.agiratec.dropdrive.client.application.CommunicatorFactory;
 import br.agiratec.dropdrive.client.util.Launcher;
 import br.agiratec.dropdrive.client.util.Messages;
 
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
 
 @SuppressWarnings("serial")
 public class CreateUserView extends JXDialog{
@@ -43,12 +42,19 @@ public class CreateUserView extends JXDialog{
 	private static final int width= 400;
 	private static final int height = 250;
 
-	
+	/**
+	* Este Ž o construtor Default da classe
+	*@author Igor Maldonado Floor
+	*/
 	public CreateUserView(JComponent component){
 		super(component);
 	}
 	
-	
+	/**
+	* Este metodo tem por fun‹o montar a interface gr‡fica.
+	* @return void
+	* @author Igor Maldonado Floor
+	*/
 	public void createGui(){
 		ct = this.getContentPane();
 		
@@ -122,7 +128,12 @@ public class CreateUserView extends JXDialog{
 		
 	}
 	
-	public void btnRegister_actionPerformed(){
+	/**
+	* Este metodo implementa a Action do botao btnRegister
+	* @return void
+	* @author Igor Maldonado Floor
+	*/
+	private void btnRegister_actionPerformed(){
 		String login = txtLogin.getText();
 		String name = txtName.getText();
 		String password = txtPassword.getText();
@@ -131,8 +142,8 @@ public class CreateUserView extends JXDialog{
 		String answer = txtAnswer.getText();
 		if(login.length()>0 && name.length()>0 && password.length() >0 && email.length() >0 && question.length() >0
 				&& answer.length()>0){
-			ClientCommunicator communicator = new ClientCommunicator();
-			processResponse(communicator.createNewPeer(login, name, password, email, question, answer));
+			ClientCommunicator communicator = CommunicatorFactory.getCommunicator();
+			processResponse(communicator.createUser(login, name, password, email, question, answer));
 		}else{
 			String message = "";
 			if(login.length()==0){
@@ -157,11 +168,21 @@ public class CreateUserView extends JXDialog{
 		}
 	}
 	
-	public void btnCancel_actionPerformed(){
+	/**
+	* Este metodo implementa a Action do btnCancel
+	* @return void
+	* @author Igor Maldonado Floor
+	*/
+	private void btnCancel_actionPerformed(){
 		dispose();
 	}
 	
-	public void processResponse(ClientResponse response){
+	/**
+	* Este metodo tenta criar um novo User, para tal ele chama a classe ClientCommunicator, e baseando na ClientResponse, analisamos se o User foi criado com sucesso ou nao
+	* @return void
+	* @author Igor Maldonado Floor
+	*/
+	private void processResponse(ClientResponse response){
 		if(response != null){
 			if(response.getStatus() == 200){
 				JOptionPane.showMessageDialog(null, Messages.getString("peerCreatedWithSucess"));
@@ -185,6 +206,7 @@ public class CreateUserView extends JXDialog{
 		
 	}
 	
+	//Setter
 	public void setFrameBefore(FrameBefore frameBefore){
 		this.frameBefore = frameBefore;
 	}

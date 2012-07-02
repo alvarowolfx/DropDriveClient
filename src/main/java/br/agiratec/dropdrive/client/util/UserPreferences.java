@@ -4,11 +4,20 @@ import java.util.prefs.Preferences;
 
 
 public class UserPreferences {
+	//usado pelo client
 	private final static String HOSTNAME = "hostname";
+	//usado pelo postgres
 	private final static String USER = "user";
 	private final static String PASSWORD = "userPassword";
+	
+	//configuração de usuario e senha para acesso ao DropDrive
 	private final static String MY_USER = "myUser";
 	private final static String MY_PASSWORD = "myPassword";
+	private final static String REMEMBER_ME = "rememberMe";
+	
+	//pasta dos arquivos que serão compartilhados
+	private final static String MY_FOLDER_DIRECTORY = "myFolderDirectory";
+	
 	
 	private final static String USER_NODE = "userPreferences";
 	
@@ -44,6 +53,14 @@ public class UserPreferences {
 		preferences.put(PASSWORD, value);
 	}
 	
+	public void setPrefMyFolderDirectory(String value){
+		preferences.put(MY_FOLDER_DIRECTORY, value);
+	}
+	
+	public void setPrefRememberMe(String value){
+		preferences.put(REMEMBER_ME, value);
+	}
+	
 	public String getPrefHostname(){
 		return preferences.get(HOSTNAME, "http://dropdrive.agiratec.com.br");
 	}
@@ -62,6 +79,14 @@ public class UserPreferences {
 	
 	public String getPrefPassword(){
 		return preferences.get(PASSWORD, "");
+	}
+	
+	public String getPrefMyFolderDirectory(){
+		return preferences.get(MY_FOLDER_DIRECTORY, "/somewhere/anywhere");
+	}
+	
+	public String getPrefRememberMe(){
+		return preferences.get(REMEMBER_ME, "false");
 	}
 	
 }
