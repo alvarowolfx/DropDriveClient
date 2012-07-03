@@ -12,9 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.hibernate.annotations.Proxy;
-
 @Entity
 @XmlRootElement
 public class Chunk implements Serializable{

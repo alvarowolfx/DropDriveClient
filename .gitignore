@@ -1,0 +1,7 @@
+.amateras
+.classpath
+/target
+target/
+build/
+/build
+*.class

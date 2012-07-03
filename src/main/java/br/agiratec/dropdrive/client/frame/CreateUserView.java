@@ -23,6 +23,7 @@ import br.agiratec.dropdrive.client.application.ClientCommunicator;
 import br.agiratec.dropdrive.client.application.CommunicatorFactory;
 import br.agiratec.dropdrive.client.util.Launcher;
 import br.agiratec.dropdrive.client.util.Messages;
+import br.agiratec.dropdrive.client.util.UserPreferences;
 
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -186,8 +187,8 @@ public class CreateUserView extends JXDialog{
 		if(response != null){
 			if(response.getStatus() == 200){
 				JOptionPane.showMessageDialog(null, Messages.getString("peerCreatedWithSucess"));
-				Launcher.getPreferences().setPrefMyUser(txtLogin.getText());
-				Launcher.getPreferences().setPrefMyPassword(txtPassword.getText());
+				UserPreferences.getInstance().setPrefMyUser(txtLogin.getText());
+				UserPreferences.getInstance().setPrefMyPassword(txtPassword.getText());
 				dispose();
 				frameBefore.wake();
 			}else{

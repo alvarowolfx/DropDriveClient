@@ -6,6 +6,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import br.agiratec.dropdrive.client.util.Launcher;
+import br.agiratec.dropdrive.client.util.UserPreferences;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -120,7 +121,7 @@ public class ClientCommunicator implements Communicator{
 	* @author Igor Maldonado Floor
 	*/
 	private static URI getURI() {
-		return UriBuilder.fromUri(Launcher.getPreferences().getPrefHostname()).build();
+		return UriBuilder.fromUri(UserPreferences.getInstance().getPrefHostname()).build();
 	}
 
 

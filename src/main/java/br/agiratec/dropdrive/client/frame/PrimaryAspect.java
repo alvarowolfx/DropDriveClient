@@ -39,9 +39,8 @@ public class PrimaryAspect extends JXFrame{
 	private FileTableModel modelFile;
 	
 	private static final int screenWidth =Toolkit.getDefaultToolkit().getScreenSize().width; 
-	private static final int screenHeight=Toolkit.getDefaultToolkit().getScreenSize().height;
-	private  UserPreferences preferences = Launcher.getPreferences();
-	private File sharedDirectory = new File(Launcher.getPreferences().getPrefMyFolderDirectory());
+	private static final int screenHeight=Toolkit.getDefaultToolkit().getScreenSize().height;	
+	private File sharedDirectory = new File(UserPreferences.getInstance().getPrefMyFolderDirectory());
 	
 	/**
 	* Construtor default da classe
@@ -139,14 +138,14 @@ public class PrimaryAspect extends JXFrame{
 	* @author Igor Maldonado Floor
 	*/
 	public void btnChoseMyFolder_actionPerformed(){
-		String myFolderDirectory = preferences.getPrefMyFolderDirectory();
+		String myFolderDirectory = UserPreferences.getInstance().getPrefMyFolderDirectory();
 		File file = new File(myFolderDirectory);
 		if(file.isDirectory()){
 			flcMyFolderDirectory.setCurrentDirectory(file);
 		}
 		if(flcMyFolderDirectory.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
 			file = flcMyFolderDirectory.getSelectedFile();
-			preferences.setPrefMyFolderDirectory(file.getAbsolutePath());
+			UserPreferences.getInstance().setPrefMyFolderDirectory(file.getAbsolutePath());
 			sharedDirectory = file;
 			modelFile.setFiles(new ArrayList<File>(getFilesInDirectory()));
 			updateView();

@@ -213,7 +213,7 @@ public class LoginView extends JXFrame implements FrameBefore{
 	* @author Igor Maldonado Floor
 	*/
 	private void miConfig_actionPerformed(){
-		String hostname = Launcher.getPreferences().getPrefHostname();
+		String hostname = UserPreferences.getInstance().getPrefHostname();
 		String newHostName="";
 		newHostName = JOptionPane.showInputDialog(Messages.getString("pleaseInsertHostName"),hostname);
 		if(newHostName != null){
@@ -221,7 +221,7 @@ public class LoginView extends JXFrame implements FrameBefore{
 				newHostName="http://"+newHostName;
 			}
 			if(JOptionPane.showConfirmDialog(null, Messages.getString("confirmNewHostName")+": "+newHostName+"?")==JOptionPane.YES_OPTION){
-				Launcher.getPreferences().setPrefHostname(newHostName);
+				UserPreferences.getInstance().setPrefHostname(newHostName);
 				updateStatusConnection();
 			}
 		}
@@ -276,8 +276,8 @@ public class LoginView extends JXFrame implements FrameBefore{
 	*/
 	public void wake() {
 		updateStatusConnection();
-		txtLogin.setText(Launcher.getPreferences().getPrefMyUser());
-		txpPassword.setText(Launcher.getPreferences().getPrefMyPassword());
+		txtLogin.setText(UserPreferences.getInstance().getPrefMyUser());
+		txpPassword.setText(UserPreferences.getInstance().getPrefMyPassword());
 	}
 	
 	/**
@@ -302,7 +302,7 @@ public class LoginView extends JXFrame implements FrameBefore{
 	* @author Igor Maldonado Floor
 	*/
 	private void rememberingMyLogin(){
-		UserPreferences preferences = Launcher.getPreferences();
+		UserPreferences preferences = UserPreferences.getInstance();
 		if(preferences.getPrefRememberMe().equals("true")){
 			txtLogin.setText(preferences.getPrefMyUser());
 			txpPassword.setText(preferences.getPrefMyPassword());
@@ -317,7 +317,7 @@ public class LoginView extends JXFrame implements FrameBefore{
 	*/
 	@SuppressWarnings("deprecation")
 	private void doRememberMe(){
-		UserPreferences preferences = Launcher.getPreferences();
+		UserPreferences preferences = UserPreferences.getInstance();
 		preferences.setPrefMyUser(txtLogin.getText());
 		preferences.setPrefMyPassword(txpPassword.getText());
 		preferences.setPrefRememberMe("true");
@@ -329,7 +329,7 @@ public class LoginView extends JXFrame implements FrameBefore{
 	* @author Igor Maldonado Floor
 	*/
 	private void doNotRememberMe(){
-		UserPreferences preferences = Launcher.getPreferences();
+		UserPreferences preferences = UserPreferences.getInstance();
 		preferences.setPrefMyUser("");
 		preferences.setPrefMyPassword("");
 		preferences.setPrefRememberMe("false");
