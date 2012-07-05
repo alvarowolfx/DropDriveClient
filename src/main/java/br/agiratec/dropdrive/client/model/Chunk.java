@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -19,8 +20,11 @@ public class Chunk implements Serializable{
 	@Id
 	@GeneratedValue
 	private Long id;
-	private Integer chunkNumber;	
-		
+	private Integer chunkNumber;
+	
+	@Transient
+	private byte[] content; 
+			
 	@ManyToMany(mappedBy = "chunksOfFiles")
 	private Set<Device> owners = new HashSet<Device>();
 		
@@ -53,6 +57,12 @@ public class Chunk implements Serializable{
 	}
 	public void setFile(SharedFile file) {
 		this.file = file;
+	}
+	public byte[] getContent() {
+		return content;
+	}
+	public void setContent(byte[] content) {
+		this.content = content;
 	}
 
 	
