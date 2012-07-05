@@ -12,8 +12,10 @@ public class SocketReceiver implements Runnable {
 
 	private HolePunchingTarget localTarget = null;
 	
-	public SocketReceiver() {
+	public SocketReceiver() {		
+		long init = System.currentTimeMillis();
 		initReceiver();
+		System.out.println("Demorou "+(System.currentTimeMillis()-init)+" ms para iniciar.");
 		Thread t = new Thread(this);
 		t.start();
 	}
@@ -24,8 +26,12 @@ public class SocketReceiver implements Runnable {
 			
 			try {
 				Socket sock = localTarget.accept();
-				System.out.println("Alguem se conectou");
-				System.out.println(sock.getInetAddress());
+				
+				System.out.println("Alguem se conectou");				
+				System.out.println(sock.getInetAddress());				
+				Thread t = new Thread(new SocketReceivedHandler(sock));
+				t.start();
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
