@@ -1,69 +1,60 @@
 package br.agiratec.dropdrive.client.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+public class Chunk implements Serializable,Comparator<Chunk>{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2754809355207008222L;
 
-@Entity
-@XmlRootElement
-public class Chunk implements Serializable{
-
-	@Id
-	@GeneratedValue
-	private Long id;
 	private Integer chunkNumber;
-	
-	@Transient
-	private byte[] content; 
-			
-	@ManyToMany(mappedBy = "chunksOfFiles")
-	private Set<Device> owners = new HashSet<Device>();
 		
-	@ManyToOne
+	private byte[] content; 
+				
+	private Set<Device> owners = new HashSet<Device>();
+			
 	private SharedFile file;
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+
 	public Integer getChunkNumber() {
 		return chunkNumber;
 	}
+
 	public void setChunkNumber(Integer chunkNumber) {
 		this.chunkNumber = chunkNumber;
 	}
-	@XmlElement
-	public Set<Device> getOwners() {
-		return owners;
-	}
-	public void setOwners(Set<Device> owners) {
-		this.owners = owners;
-	}
-	
-	@XmlElement
-	public SharedFile getFile() {
-		return file;
-	}
-	public void setFile(SharedFile file) {
-		this.file = file;
-	}
+
 	public byte[] getContent() {
 		return content;
 	}
+
 	public void setContent(byte[] content) {
 		this.content = content;
 	}
 
+	public Set<Device> getOwners() {
+		return owners;
+	}
+
+	public void setOwners(Set<Device> owners) {
+		this.owners = owners;
+	}
+
+	public SharedFile getFile() {
+		return file;
+	}
+
+	public void setFile(SharedFile file) {
+		this.file = file;
+	}
+
+	public int compare(Chunk c1, Chunk c2) {		
+		return c1.chunkNumber.compareTo(c2.chunkNumber);
+	}
+		
 	
 }

@@ -2,61 +2,40 @@ package br.agiratec.dropdrive.client.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@Entity
-@XmlRootElement
 public class SharedFile implements Serializable{
 
-	@Id
-	@GeneratedValue
-	private Long id;
-	private String md5Hash;
 	
-	@ElementCollection
-	private List<String> names;
-	private Long size;
-		
-	@OneToMany(mappedBy = "file")
-	private Set<Chunk> chunksOfFiles = new HashSet<Chunk>();
-	
-	public Long getId() {
-		return id;
-	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9147598864106036967L;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	private String md5Hash;
+		
+	private String path;
+	private Long size;
+	private Long numberOfParts;	
+	
+	private Set<Chunk> chunksOfFiles = new HashSet<Chunk>();
 
 	public String getMd5Hash() {
 		return md5Hash;
 	}
 
-	public void setMd5Hash(String md5Hash) {		
+	public void setMd5Hash(String md5Hash) {
 		this.md5Hash = md5Hash;
 	}
 
-	public List<String> getNames() {
-		return names;
+	public String getPath() {
+		return path;
 	}
 
-	public void setNames(List<String> names) {
-		this.names = names;
+	public void setPath(String path) {
+		this.path = path;
 	}
 
-	public void addName(String name){
-		this.names.add(name);
-	}
-	
 	public Long getSize() {
 		return size;
 	}
@@ -65,7 +44,14 @@ public class SharedFile implements Serializable{
 		this.size = size;
 	}
 
-	@XmlElement
+	public Long getNumberOfParts() {
+		return numberOfParts;
+	}
+
+	public void setNumberOfParts(Long numberOfParts) {
+		this.numberOfParts = numberOfParts;
+	}
+
 	public Set<Chunk> getChunksOfFiles() {
 		return chunksOfFiles;
 	}
@@ -73,5 +59,7 @@ public class SharedFile implements Serializable{
 	public void setChunksOfFiles(Set<Chunk> chunksOfFiles) {
 		this.chunksOfFiles = chunksOfFiles;
 	}
+	
+	
 	
 }
