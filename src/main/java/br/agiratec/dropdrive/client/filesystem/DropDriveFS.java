@@ -1,19 +1,24 @@
 package br.agiratec.dropdrive.client.filesystem;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Properties;
+
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
+import org.jdesktop.swingx.SwingXUtilities;
+import org.jdesktop.swingx.util.OS;
 
 import br.agiratec.dropdrive.client.model.Chunk;
-import br.agiratec.dropdrive.client.model.SharedFile;
+import br.agiratec.dropdrive.client.model.SharedFileHeader;
 import br.agiratec.dropdrive.client.util.UserPreferences;
 
 import com.google.common.hash.Hashing;
@@ -25,9 +30,10 @@ public class DropDriveFS {
 	private static String workingDirectory = "";
 	private static final String INCOMPLETE = ".incomplete";
 	private static final Long DEFAULT_CHUNK_SIZE = 1024l*1024l;
+	private static final String OCULT_FILE_STRING = OS.isWindows() ? "_" : ".";
 
 	static {
-		fs = new DropDriveFS();
+		fs = new DropDriveFS();		
 	}
 
 	private DropDriveFS() {
@@ -52,10 +58,10 @@ public class DropDriveFS {
 	public String getMd5OfFile(String path) throws FileNotFoundException{		
 		File file = null;
 		if(fileIsIncomplete(path)){
-			file = new File(workingDirectory+path+INCOMPLETE);
-		}else{
-			file = new File(workingDirectory+path);
+			SharedFileHeader sfh = loadFileDescriptor(path);
+			return sfh.getMd5Hash();			
 		}
+		file = new File(workingDirectory+path);
 		String saida = "";
 		try {
 			saida = Files.hash(file,Hashing.md5()).toString();
@@ -79,114 +85,185 @@ public class DropDriveFS {
 		
 		File file = null;		
 		if(fileIsIncomplete(path)){
-			file = new File(workingDirectory+path+INCOMPLETE);
-			//N‹o implementado ainda
+			SharedFileHeader sfh = loadFileDescriptor(path);
+			if(sfh.getChunksNumberOfFile().contains(new Integer(chunkNumber))){
+				file = new File(workingDirectory+path+INCOMPLETE);			
+			}else{
+				return null;
+			}
 		}else{			
-			chunkNumber += 1;
 			file = new File(workingDirectory+path);
-			Chunk c = new Chunk();
-			c.setChunkNumber(chunkNumber);
-			int size = 0;
-			if(file.length() <= (chunkNumber*DEFAULT_CHUNK_SIZE)){
-				size = (int) (file.length()- ((chunkNumber-1)*DEFAULT_CHUNK_SIZE));
-			}else{
-				size = DEFAULT_CHUNK_SIZE.intValue();
-			}
-			byte dst[] = new byte[size];
-			MappedByteBuffer mappedBuffer;			
-			try {
-				mappedBuffer = Files.map(file);			
-				
-				mappedBuffer.position((chunkNumber-1)*DEFAULT_CHUNK_SIZE.intValue());
-				mappedBuffer.get(dst, 0 , size);												
-				c.setContent(dst);
-								
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}			
-			
-			return c;
-		}		
-		return null;
-	}
-	
-	public boolean writeChunkOfFile(Chunk c){
-		//Tem que colocar o sharefile que o pedao pertence
-		if(c.getFile() == null){
-			return false;			
-		}else{
-			SharedFile sFile = c.getFile();
-			File file = new File(workingDirectory+sFile.getPath()+INCOMPLETE);
-			if(!file.exists()){
-				try {
-					if(file.createNewFile()){
-						if(sFile.getNumberOfParts() == 1l){
-							saveSharedFileObject(sFile,file);
-							convertIncompleteToComplete(file);
-						}else{
-							saveSharedFileObject(sFile,file);
-						}
-						return true;
-					}
-				} catch (IOException e) {					
-					e.printStackTrace();
-				}
-			}else{
-				
-				SharedFile sFileInput = readSharedFileObject(file);
-				boolean exists = false;
-				int numberOfParts = 0;
-				for(Chunk chunk : sFileInput.getChunksOfFiles()){
-					numberOfParts++;
-					if(chunk.getChunkNumber().intValue() == c.getChunkNumber().intValue()){
-						exists = true;
-						break;
-					}
-				}
-				if(!exists){
-					sFileInput.getChunksOfFiles().add(c);
-					saveSharedFileObject(sFileInput, file);
-					if(sFileInput.getNumberOfParts().intValue() == sFileInput.getChunksOfFiles().size()){
-						convertIncompleteToComplete(file);
-					}
-				}else{
-					if(sFileInput.getNumberOfParts().intValue() == numberOfParts){
-						convertIncompleteToComplete(file);
-					}					
-				}
-				return true;
-				
-			}
 		}
-		return false;
+		chunkNumber += 1;
+		Chunk c = new Chunk();
+		c.setChunkNumber(chunkNumber);
+		int size = 0;
+		if(file.length() <= (chunkNumber*DEFAULT_CHUNK_SIZE)){
+			size = (int) (file.length()- ((chunkNumber-1)*DEFAULT_CHUNK_SIZE));
+		}else{
+			size = DEFAULT_CHUNK_SIZE.intValue();
+		}
+		byte dst[] = new byte[size];
+		MappedByteBuffer mappedBuffer;			
+		try {
+			mappedBuffer = Files.map(file);					
+			
+			mappedBuffer.position((chunkNumber-1)*DEFAULT_CHUNK_SIZE.intValue());
+			mappedBuffer.get(dst, 0 , size);												
+			c.setContent(dst);
+							
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}			
+		
+		return c;
 	}
 	
-	private void convertIncompleteToComplete(File file) {
-		SharedFile sFile = readSharedFileObject(file);
+	public boolean writeChunkOfFile(SharedFileHeader sFile,Chunk c){
 		
-		ArrayList<Chunk> chunks = new ArrayList<Chunk>(sFile.getChunksOfFiles());
-		Collections.sort(chunks,new Chunk());
+		File file = new File(workingDirectory+sFile.getPath()+INCOMPLETE);
+		if(!file.exists()){
+			
+			createSharedFile(sFile,file);			
+			sFile.getChunksNumberOfFile().add(c.getChunkNumber());
+			saveFileDescriptor(sFile);
+			
+			writeChunk(file,c);
+			if(sFile.getNumberOfParts() == 1l){
+				convertIncompleteToComplete(file);
+			}
+			
+			return true;			
+		}else{
+						
+			boolean exists = false;
+			int numberOfParts = 0;
+			for(Integer nChunk : sFile.getChunksNumberOfFile()){
+				numberOfParts++;
+				if(nChunk.intValue() == c.getChunkNumber().intValue()){
+					exists = true;
+					break;
+				}
+			}
+			if(!exists){
+				sFile.getChunksNumberOfFile().add(c.getChunkNumber());
+				saveFileDescriptor(sFile);
+				writeChunk(file,c);
+				if(sFile.getNumberOfParts().intValue() == sFile.getChunksNumberOfFile().size()){
+					convertIncompleteToComplete(file);
+				}
+			}else{
+				if(sFile.getNumberOfParts().intValue() == numberOfParts){
+					convertIncompleteToComplete(file);
+				}					
+			}
+			return true;
+			
+		}
+	
+	}
+	
+	private void writeChunk(File file, Chunk c) {
+		int number = c.getChunkNumber()-1;		
+		
+		System.out.println("escrevendo chunck numero "+number);
+		try{
+									
+			RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(), "rw");
+																
+			f.seek(number*DEFAULT_CHUNK_SIZE.intValue());
+			f.write(c.getContent());
+			
+			f.close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
+		
+		
+	}
+
+	private void createSharedFile(SharedFileHeader sFile, File novo) {				
+		try {
+			
+				
+			RandomAccessFile f = new RandomAccessFile(novo.getAbsolutePath(), "rw");			
+	        f.setLength(sFile.getSize());
+	        f.close();
+			
+		} catch (IOException e) {	
+			e.printStackTrace();
+		}
+	}
+
+	private void saveFileDescriptor(SharedFileHeader sFile) {
+		
+		Properties descriptor = new Properties();
+		descriptor.put("md5Hash",sFile.getMd5Hash());
+		descriptor.put("numberOfParts",Long.toString(sFile.getNumberOfParts()));
+		descriptor.put("size",Long.toString(sFile.getSize()));
+		descriptor.put("parts",Arrays.toString(sFile.getChunksNumberOfFile().toArray()));
 		
 		try {
-			FileOutputStream fos = new FileOutputStream(workingDirectory+sFile.getPath());
-			for(Chunk c : chunks){
-				fos.write(c.getContent());
+			File arquivo = new File(workingDirectory+OCULT_FILE_STRING+sFile.getPath());
+			if(!arquivo.exists()){
+				arquivo.createNewFile();
 			}
-			fos.flush();
+			FileOutputStream fos = new FileOutputStream(arquivo);
+			descriptor.store(fos,"Descriptor of Incomplete file in DropDrive");			
 			fos.close();
 			
-			File f = new File(workingDirectory+sFile.getPath()+INCOMPLETE);
-			if(f.exists()){
-				f.delete();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private SharedFileHeader loadFileDescriptor(String path){
 		
+		Properties descriptor = new Properties();
+		
+		File arquivo = new File(workingDirectory+OCULT_FILE_STRING+path);
+		FileReader fr;
+		try {
+			fr = new FileReader(arquivo);
+			descriptor.load(fr);
+				
+			SharedFileHeader sfh = new SharedFileHeader();
+		
+			sfh.setMd5Hash(descriptor.getProperty("md5Hash"));	
+			sfh.setNumberOfParts(Long.decode(descriptor.getProperty("numberOfParts")));
+			sfh.setSize(Long.decode(descriptor.getProperty("size")));
+			String set = descriptor.getProperty("parts");			
+			
+			
+			String sets[] = set.replace("[","").replace("]","").replace(" ","").split(",");
+			HashSet<Integer> parts = new HashSet<Integer>();
+			for(int i = 0 ; i < sets.length ; i++){
+				parts.add(Integer.decode(sets[i]));
+			}
+			
+			return sfh;
+			
+			
+		} catch (FileNotFoundException e) {				
+			e.printStackTrace();				
+		} catch (IOException e) {
+			e.printStackTrace();				
+		}
+		return null;
+		
+	}
+
+	private void convertIncompleteToComplete(File file) {
+		
+		File saida = new File(file.getAbsolutePath().replace(INCOMPLETE, ""));
+		file.renameTo(saida);
+		file.delete();
+		
+		File descriptor = new File(OCULT_FILE_STRING+workingDirectory+file.getName());
+		descriptor.delete();
+						
 	}
 
 	public boolean fileIsIncomplete(String path) throws FileNotFoundException{
@@ -202,48 +279,6 @@ public class DropDriveFS {
 			return false;
 		}
 	}
-	
-	private SharedFile readSharedFileObject(File file){
-		FileInputStream fis;
-		SharedFile sFile = null;
-		try {
-			fis = new FileInputStream(file);
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			
-			sFile = (SharedFile) ois.readObject();
-						
-			ois.close();
-			fis.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		return sFile;
-		
-	}
-	
-	private void saveSharedFileObject(SharedFile sFile,File file){
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			for(Chunk c : sFile.getChunksOfFiles()){
-				c.setFile(null);
-			}
-			oos.writeObject(sFile);
-			oos.flush();
-			oos.close();
-			fos.flush();
-			fos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
+
 }
 	
