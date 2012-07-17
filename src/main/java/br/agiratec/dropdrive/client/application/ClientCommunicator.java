@@ -1,14 +1,17 @@
 package br.agiratec.dropdrive.client.application;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
-import br.agiratec.dropdrive.client.util.Launcher;
 import br.agiratec.dropdrive.client.util.UserPreferences;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
@@ -47,8 +50,37 @@ public class ClientCommunicator implements Communicator{
 		return response;
 	}
 	
-	public ClientResponse publishSharedFile(){
-		return null;
+	/**
+	* Método para publicação de arquivos no servidor do DropDrive
+	* 
+	* @param fileName Nome do arquivo está sendo publicado.
+	* @param md5Hash  Hash do arquivo que está sendo publicado.
+	* @param parts 	  Lista de partes que o dispositivo possui.
+	* @param size	  Tamanho do arquivo em bytes.
+	* @return response Dados de resposta do servidor.
+	* @author Alvaro Viebrantz
+	*/
+	public ClientResponse publish(String fileName,String md5Hash,List<Integer> parts,Long size){
+		
+		ClientResponse response=null;
+		try{ 
+			WebResource temp = service.path("api")
+										.path("v1")
+										.path("publish")
+											.queryParam("deviceID",UserPreferences.getInstance().getComputerIdentifier())
+											.queryParam("fileName",fileName)
+											.queryParam("md5", md5Hash)
+											.queryParam("size", Long.toString(size));					
+					
+			for(Integer part : parts){
+				temp = temp.queryParam("parts", Integer.toString(part));
+			}
+			response = temp.accept(MediaType.APPLICATION_JSON)
+								.post(ClientResponse.class);
+			
+		}catch(ClientHandlerException exception){}
+
+		return response;
 	}
 	
 	
@@ -77,6 +109,7 @@ public class ClientCommunicator implements Communicator{
 		try{response = service.path("api")
 				.path("v1")
 				.path("auth")
+					.queryParam("deviceID",UserPreferences.getInstance().getComputerIdentifier())
 					.queryParam("login", login)
 					.queryParam("password", password).accept(MediaType.APPLICATION_JSON)
 						.get(ClientResponse.class);}
@@ -86,12 +119,6 @@ public class ClientCommunicator implements Communicator{
 //			System.out.println("Response2: "+response.getEntity(String.class));
 //		}
 		return response;
-	}
-
-	public ClientResponse publish(String user, String device, String fileName,
-			String MD5) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public ClientResponse searchForDevices(String md5) {
@@ -108,7 +135,7 @@ public class ClientCommunicator implements Communicator{
 	* Construtor padrão da classe
 	*@author Igor Maldonado Floor
 	*/
-	protected ClientCommunicator(){
+	public ClientCommunicator(){
 		config = new DefaultClientConfig();
 		client = Client.create(config);
 		client.setConnectTimeout(5000);
