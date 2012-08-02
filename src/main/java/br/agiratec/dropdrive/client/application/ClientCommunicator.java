@@ -55,28 +55,25 @@ public class ClientCommunicator implements Communicator{
 	* 
 	* @param fileName Nome do arquivo está sendo publicado.
 	* @param md5Hash  Hash do arquivo que está sendo publicado.
-	* @param parts 	  Lista de partes que o dispositivo possui.
 	* @param size	  Tamanho do arquivo em bytes.
+	* @param complete Arquivo está complete ou não.
 	* @return response Dados de resposta do servidor.
 	* @author Alvaro Viebrantz
 	*/
-	public ClientResponse publish(String fileName,String md5Hash,List<Integer> parts,Long size){
+	public ClientResponse publish(String fileName,String md5Hash,Long size,Boolean complete){
 		
 		ClientResponse response=null;
 		try{ 
-			WebResource temp = service.path("api")
-										.path("v1")
-										.path("publish")
-											.queryParam("deviceID",UserPreferences.getInstance().getComputerIdentifier())
-											.queryParam("fileName",fileName)
-											.queryParam("md5", md5Hash)
-											.queryParam("size", Long.toString(size));					
-					
-			for(Integer part : parts){
-				temp = temp.queryParam("parts", Integer.toString(part));
-			}
-			response = temp.accept(MediaType.APPLICATION_JSON)
-								.post(ClientResponse.class);
+			service.path("api")
+				   .path("v1")
+				   .path("publish")
+				   		.queryParam("deviceID",UserPreferences.getInstance().getComputerIdentifier())
+				   		.queryParam("fileName",fileName)
+				   		.queryParam("md5", md5Hash)
+				   		.queryParam("size", Long.toString(size))
+				   		.queryParam("complete",Boolean.toString(complete))
+				   			.accept(MediaType.APPLICATION_JSON)
+				   				.post(ClientResponse.class);											
 			
 		}catch(ClientHandlerException exception){}
 
@@ -87,12 +84,15 @@ public class ClientCommunicator implements Communicator{
 	/**
 	* Metodo que verifica se é possivel conectar com o servidor
 	* @return boolean
-	* @author Igor Maldonado Floor
+	* @author Alvaro Viebrantz 
 	*/
 	public boolean isConnectingWithServer() {
 			ClientResponse response=null;
-			try{response = service.path("api").path("v1").path("user").path("new").accept(MediaType.APPLICATION_JSON).post(ClientResponse.class);}
-			catch(com.sun.jersey.api.client.ClientHandlerException exception){}
+			try{
+				response = service.path("api").accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			}catch(com.sun.jersey.api.client.ClientHandlerException exception){
+				exception.printStackTrace();
+			}
 			if(response != null){
 				if(response.getStatus() != 404){
 					return true;
@@ -120,7 +120,18 @@ public class ClientCommunicator implements Communicator{
 //		}
 		return response;
 	}
-
+	
+	/**
+	* Função responsável em sinalizar ao servidor de que o cliente continua interessado na troca de arquivos
+	* 
+	* @return response Dados de resposta do servidor.
+	* @author Alvaro Viebrantz
+	*/
+	public ClientResponse heartbeat() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public ClientResponse searchForDevices(String md5) {
 		// TODO Auto-generated method stub
 		return null;
@@ -150,8 +161,6 @@ public class ClientCommunicator implements Communicator{
 	private static URI getURI() {
 		return UriBuilder.fromUri(UserPreferences.getInstance().getPrefHostname()).build();
 	}
-
-
-	
+		
 	
 }
