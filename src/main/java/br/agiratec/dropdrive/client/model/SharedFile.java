@@ -16,7 +16,8 @@ public class SharedFile implements Serializable{
 		
 	private String path;
 	private Long size;
-	private Long numberOfParts;		
+	private Long numberOfParts;	
+	private Boolean complete;
 
 	public String getMd5Hash() {
 		return md5Hash;
@@ -40,6 +41,14 @@ public class SharedFile implements Serializable{
 
 	public void setSize(Long size) {
 		this.size = size;
+	}
+
+	public Boolean getComplete() {
+		return complete;
+	}
+
+	public void setComplete(Boolean complete) {
+		this.complete = complete;
 	}
 
 	public Long getNumberOfParts() {

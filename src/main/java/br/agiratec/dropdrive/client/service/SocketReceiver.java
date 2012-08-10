@@ -1,10 +1,11 @@
-package br.agiratec.dropdrive.client.socket;
+package br.agiratec.dropdrive.client.service;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+import br.agiratec.dropdrive.client.socket.SocketReceivedHandler;
 import br.agiratec.dropdrive.client.util.UserPreferences;
 import de.htwg_konstanz.in.uce.hp.parallel.target.HolePunchingTarget;
 
@@ -13,11 +14,7 @@ public class SocketReceiver implements Runnable {
 	private HolePunchingTarget localTarget = null;
 	
 	public SocketReceiver() {		
-		long init = System.currentTimeMillis();
 		initReceiver();
-		System.out.println("Demorou "+(System.currentTimeMillis()-init)+" ms para iniciar.");
-		Thread t = new Thread(this);
-		t.start();
 	}
 
 	public void run() {

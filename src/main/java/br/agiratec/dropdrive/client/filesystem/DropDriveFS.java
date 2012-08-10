@@ -7,17 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
-import org.jdesktop.swingx.SwingXUtilities;
 import org.jdesktop.swingx.util.OS;
 
 import br.agiratec.dropdrive.client.model.Chunk;
+import br.agiratec.dropdrive.client.model.SharedFile;
 import br.agiratec.dropdrive.client.model.SharedFileHeader;
 import br.agiratec.dropdrive.client.util.UserPreferences;
 
@@ -44,6 +42,77 @@ public class DropDriveFS {
 		return fs;
 	}
 
+	/**
+	* Este metodo retorna um list de arquivos que obedece a condicao de nao ser diretorio e nem estar oculto
+	* @return List<File>
+	* @author Igor Maldonado Floor
+	*/
+	public ArrayList<File> getFilesInDirectory(){
+		File file = new File(workingDirectory);
+		ArrayList<File> filesList = new ArrayList<File>();
+		if(file.isDirectory()){
+			File[] files = file.listFiles();
+			
+			for (int i = 0; i < files.length; i++) {
+				if(!files[i].isDirectory() && !files[i].isHidden()){
+					filesList.add(files[i]);
+				}
+			}
+		}
+		return filesList;
+	}
+	
+	
+	public ArrayList<SharedFile> getFilesInDirectoryForPublish(){
+		File directory = new File(workingDirectory);
+		ArrayList<SharedFile> filesList = new ArrayList<SharedFile>();
+		if(directory.isDirectory()){
+			File[] files = directory.listFiles();
+			
+			for (int i = 0; i < files.length; i++) {
+				if(!files[i].isDirectory() && !files[i].isHidden()){
+					SharedFile sf = new SharedFile();
+					
+					if(files[i].getName().endsWith(INCOMPLETE)){
+						sf.setPath(files[i].getName().replace(INCOMPLETE, ""));					
+						sf.setComplete(false);
+					}else{
+						sf.setPath(files[i].getName());					
+						sf.setComplete(true);
+					}
+					
+					sf.setSize(files[i].length());
+					try {
+						sf.setMd5Hash(getMd5OfFile(sf.getPath()));
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}					
+					filesList.add(sf);
+				}
+			}
+		}
+		return filesList;
+	}
+	
+	public ArrayList<SharedFileHeader> getIncompleteFilesInDirectory(){
+		File directory = new File(workingDirectory);
+		ArrayList<SharedFileHeader> filesList = new ArrayList<SharedFileHeader>();
+		if(directory.isDirectory()){
+			File[] files = directory.listFiles();
+			
+			for (int i = 0; i < files.length; i++) {
+				if(!files[i].isDirectory() && !files[i].isHidden()){
+					
+					if(!files[i].getName().endsWith(INCOMPLETE))
+						continue;
+															
+					filesList.add(loadFileDescriptor(files[i].getName().replace(INCOMPLETE, "")));
+				}
+			}
+		}
+		return filesList;
+	}
+	
 	public Long getSizeOfFile(String path) throws FileNotFoundException{
 		File file = null;
 		if(fileIsIncomplete(path)){
@@ -60,15 +129,30 @@ public class DropDriveFS {
 		if(fileIsIncomplete(path)){
 			SharedFileHeader sfh = loadFileDescriptor(path);
 			return sfh.getMd5Hash();			
-		}
-		file = new File(workingDirectory+path);
-		String saida = "";
-		try {
-			saida = Files.hash(file,Hashing.md5()).toString();
-		} catch (IOException e) {			
-			e.printStackTrace();
-		}
-		return saida;
+		}else{
+						
+			SharedFileHeader sfh = loadFileDescriptor(path);
+			if(sfh == null){
+				
+				sfh = new SharedFileHeader();
+				file = new File(workingDirectory+path);
+				String saida = "";
+				try {
+					saida = Files.hash(file,Hashing.md5()).toString();
+				} catch (IOException e) {			
+					e.printStackTrace();
+				}
+				sfh.setMd5Hash(saida);
+				sfh.setPath(path);
+				sfh.setChunksNumberOfFile(new HashSet<Integer>());
+				sfh.setSize(file.length());
+				sfh.setNumberOfParts(getNumberOfChunksOfFile(path));
+				
+				saveFileDescriptor(sfh);
+			}
+			return sfh.getMd5Hash();						
+			
+		}		
 	}
 	
 	public Long getNumberOfChunksOfFile(String path) throws FileNotFoundException{		
@@ -120,6 +204,18 @@ public class DropDriveFS {
 		return c;
 	}
 	
+	public void createIncompleteFile(SharedFileHeader sFile){
+		
+		File file = new File(workingDirectory+sFile.getPath()+INCOMPLETE);
+		if(!file.exists()){
+			
+			createSharedFile(sFile,file);			
+			saveFileDescriptor(sFile);
+
+		}
+
+		
+	}
 	public boolean writeChunkOfFile(SharedFileHeader sFile,Chunk c){
 		
 		File file = new File(workingDirectory+sFile.getPath()+INCOMPLETE);
@@ -240,18 +336,23 @@ public class DropDriveFS {
 			String sets[] = set.replace("[","").replace("]","").replace(" ","").split(",");
 			HashSet<Integer> parts = new HashSet<Integer>();
 			for(int i = 0 ; i < sets.length ; i++){
-				parts.add(Integer.decode(sets[i]));
+				if(!sets[i].contentEquals("")){
+					parts.add(Integer.decode(sets[i]));
+				}
 			}
+			
+			sfh.setChunksNumberOfFile(parts);
 			
 			return sfh;
 			
 			
 		} catch (FileNotFoundException e) {				
-			e.printStackTrace();				
+			e.printStackTrace();	
+			return null;
 		} catch (IOException e) {
-			e.printStackTrace();				
+			e.printStackTrace();
+			return null;
 		}
-		return null;
 		
 	}
 
@@ -261,8 +362,8 @@ public class DropDriveFS {
 		file.renameTo(saida);
 		file.delete();
 		
-		File descriptor = new File(OCULT_FILE_STRING+workingDirectory+file.getName());
-		descriptor.delete();
+		//File descriptor = new File(OCULT_FILE_STRING+workingDirectory+file.getName());
+		//descriptor.delete();
 						
 	}
 

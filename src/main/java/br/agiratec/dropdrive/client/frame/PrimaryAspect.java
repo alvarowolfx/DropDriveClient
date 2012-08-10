@@ -24,6 +24,7 @@ import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
 
+import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
 import br.agiratec.dropdrive.client.util.Launcher;
 import br.agiratec.dropdrive.client.util.UserPreferences;
 import br.agiratec.dropdrive.client.viewUtil.FileTableModel;
@@ -98,35 +99,18 @@ public class PrimaryAspect extends JXFrame{
 		setExtendedState(JXFrame.MAXIMIZED_BOTH);
 		setVisible(true);
 	}
-	
-	/**
-	* Este metodo retorna um list de arquivos que obedece a condicao de nao ser diretorio e nem estar oculto
-	* @return List<File>
-	* @author Igor Maldonado Floor
-	*/
+		
 	public ArrayList<File> getFilesInDirectory(){
-		File file = sharedDirectory;
-		ArrayList<File> filesList = new ArrayList<File>();
-		if(file.isDirectory()){
-			File[] files = file.listFiles();
-			
-			for (int i = 0; i < files.length; i++) {
-				if(!files[i].isDirectory() && !files[i].isHidden()){
-					filesList.add(files[i]);
-				}
-			}
-		}
-		return filesList;
+		return DropDriveFS.getInstance().getFilesInDirectory();
 	}
 	
 	/**
 	* Este metodo atualiza a Gui
-	* @return void
 	* @author Igor Maldonado Floor
 	*/
 	public void updateView(){
 		//atualiza a table de arquivos
-		modelFile.setFiles(getFilesInDirectory());
+		modelFile.setFiles(DropDriveFS.getInstance().getFilesInDirectory());
 		modelFile.fireTableDataChanged();
 		tblFiles.updateUI();
 	}

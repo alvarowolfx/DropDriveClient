@@ -75,7 +75,9 @@ public class ClientCommunicator implements Communicator{
 				   			.accept(MediaType.APPLICATION_JSON)
 				   				.post(ClientResponse.class);											
 			
-		}catch(ClientHandlerException exception){}
+		}catch(ClientHandlerException exception){
+			
+		}
 
 		return response;
 	}
@@ -106,18 +108,18 @@ public class ClientCommunicator implements Communicator{
 
 	public ClientResponse login(String login, String password) {
 		ClientResponse response=null;
-		try{response = service.path("api")
+		try{
+			response = service.path("api")
 				.path("v1")
 				.path("auth")
 					.queryParam("deviceID",UserPreferences.getInstance().getComputerIdentifier())
 					.queryParam("login", login)
 					.queryParam("password", password).accept(MediaType.APPLICATION_JSON)
 						.get(ClientResponse.class);}
-		catch(com.sun.jersey.api.client.ClientHandlerException exception){}
-//		if(response!= null){
-//			System.out.println("response: "+response.toString());
-//			System.out.println("Response2: "+response.getEntity(String.class));
-//		}
+		catch(com.sun.jersey.api.client.ClientHandlerException exception){
+			
+		}
+
 		return response;
 	}
 	
@@ -128,8 +130,20 @@ public class ClientCommunicator implements Communicator{
 	* @author Alvaro Viebrantz
 	*/
 	public ClientResponse heartbeat() {
-		// TODO Auto-generated method stub
-		return null;
+		ClientResponse response=null;
+		try{ 
+			response = service.path("api")
+							   .path("v1")
+							   .path("heartbeat")
+							   		.queryParam("deviceID",UserPreferences.getInstance().getComputerIdentifier())				   		
+							   			.accept(MediaType.APPLICATION_JSON)
+							   				.put(ClientResponse.class);											
+			
+		}catch(ClientHandlerException exception){
+			
+		}
+
+		return response;
 	}
 	
 	public ClientResponse searchForDevices(String md5) {
