@@ -60,7 +60,12 @@ public class UserPreferences {
 	}
 
 	public void setPrefMyFolderDirectory(String value) {
-		preferences.put(MY_FOLDER_DIRECTORY, value);
+		if(value.endsWith("/")){
+			preferences.put(MY_FOLDER_DIRECTORY, value);
+		}else{
+			preferences.put(MY_FOLDER_DIRECTORY, value+"/");
+		}
+		
 	}
 
 	public void setPrefRememberMe(String value) {

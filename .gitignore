@@ -1,5 +1,10 @@
+*~
 .amateras
 .classpath
 target/
 build/
 *.class
+*.lock
+*.DS_Store
+*.swp
+*.out

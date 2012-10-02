@@ -152,8 +152,20 @@ public class ClientCommunicator implements Communicator{
 	}
 
 	public ClientResponse searchForFile(String fileName) {
-		// TODO Auto-generated method stub
-		return null;
+		ClientResponse response=null;
+		try{ 
+			response = service.path("api")
+							   .path("v1")
+							   .path("search")
+							   		.queryParam("query",fileName)				   		
+							   			.accept(MediaType.APPLICATION_JSON)
+							   				.get(ClientResponse.class);											
+			
+		}catch(ClientHandlerException exception){
+			
+		}
+
+		return response;
 	}
 	
 	/**

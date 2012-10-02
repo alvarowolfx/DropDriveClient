@@ -1,10 +1,9 @@
 package br.agiratec.dropdrive.client.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import br.agiratec.dropdrive.client.model.SharedFile;
 
@@ -22,18 +21,34 @@ public class DropDriveServiceOrchestrator implements Runnable{
 	private static Future receiverFuture = null;
 	private static Future downloaderFuture = null;
 	
+	private static Logger log = Logger.getLogger("br.agiratec.dropdrive.client.service.DropDriveServiceOrchestrator");
 	private static ExecutorService executor = null;	
 	private static boolean firstTime = true;
 	
 	static {
+
+		log.info("Orquestrador iniciando");
 		instance = new DropDriveServiceOrchestrator();		
 	}
 	
 	private DropDriveServiceOrchestrator() {
+		
+
+		log.info("Heartbeat iniciando");
 		heartbeat = new HeartBeatService();
+
+		log.info("FilePublisher iniciando");
 		publisher = new FilePublisherService();
-		receiver = new SocketReceiver();	
+				
+
+		log.info("Downloader iniciando");
 		downloader = new DownloadService();
+		
+		log.info("Receiver iniciando");
+		receiver = new SocketReceiver();	
+		
+		log.info("Executor iniciando");
+		
 		executor = Executors.newCachedThreadPool();
 		
 	}
@@ -41,6 +56,7 @@ public class DropDriveServiceOrchestrator implements Runnable{
 	public void initServices(){
 		
 		if(firstTime){
+			
 			heartbeatFuture = executor.submit(heartbeat);
 			publisherFuture = executor.submit(publisher);
 			receiverFuture = executor.submit(receiver);
@@ -58,7 +74,7 @@ public class DropDriveServiceOrchestrator implements Runnable{
 		downloader.addFile(sf);
 	}
 	
-	public static DropDriveServiceOrchestrator getInstance() {
+	public static DropDriveServiceOrchestrator getInstance() {		
 		return instance;
 	}
 

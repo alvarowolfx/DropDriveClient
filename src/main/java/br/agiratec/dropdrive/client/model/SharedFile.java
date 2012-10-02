@@ -1,8 +1,8 @@
 package br.agiratec.dropdrive.client.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SharedFile implements Serializable{
 
@@ -18,6 +18,9 @@ public class SharedFile implements Serializable{
 	private Long size;
 	private Long numberOfParts;	
 	private Boolean complete;
+	private List<String> usersOnline = new ArrayList<String>();
+	private List<String> haveFileComplete = new ArrayList<String>();
+	private List<String> haveFileIncomplete = new ArrayList<String>();
 
 	public String getMd5Hash() {
 		return md5Hash;
@@ -57,6 +60,30 @@ public class SharedFile implements Serializable{
 
 	public void setNumberOfParts(Long numberOfParts) {
 		this.numberOfParts = numberOfParts;
+	}
+
+	public List<String> getUsersOnline() {
+		return usersOnline;
+	}
+
+	public void setUsersOnline(List<String> usersOnline) {
+		this.usersOnline = usersOnline;
+	}
+
+	public List<String> getHaveFileComplete() {
+		return haveFileComplete;
+	}
+
+	public void setHaveFileComplete(List<String> haveFileComplete) {
+		this.haveFileComplete = haveFileComplete;
+	}
+
+	public List<String> getHaveFileIncomplete() {
+		return haveFileIncomplete;
+	}
+
+	public void setHaveFileIncomplete(List<String> haveFileIncomplete) {
+		this.haveFileIncomplete = haveFileIncomplete;
 	}
 		
 }

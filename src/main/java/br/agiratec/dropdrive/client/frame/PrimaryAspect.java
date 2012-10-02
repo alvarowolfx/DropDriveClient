@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import net.miginfocom.swing.MigLayout;
@@ -25,7 +27,7 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
 
 import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
-import br.agiratec.dropdrive.client.util.Launcher;
+import br.agiratec.dropdrive.client.util.SwingUtil;
 import br.agiratec.dropdrive.client.util.UserPreferences;
 import br.agiratec.dropdrive.client.viewUtil.FileTableModel;
 
@@ -33,7 +35,7 @@ import br.agiratec.dropdrive.client.viewUtil.FileTableModel;
 public class PrimaryAspect extends JXFrame{
 	private Container ct;
 	private JXPanel pnlWindow,pnlCommandBar,pnlFootInformation,pnlLeftSide;
-	private JXButton btnChoseMyFolder;
+	private JXButton btnChoseMyFolder,btnSearchAndDownload;
 	private JFileChooser flcMyFolderDirectory;
 	private JXTable tblFiles;
 	private JScrollPane scpFiles;
@@ -41,7 +43,6 @@ public class PrimaryAspect extends JXFrame{
 	
 	private static final int screenWidth =Toolkit.getDefaultToolkit().getScreenSize().width; 
 	private static final int screenHeight=Toolkit.getDefaultToolkit().getScreenSize().height;	
-	private File sharedDirectory = new File(UserPreferences.getInstance().getPrefMyFolderDirectory());
 	
 	/**
 	* Construtor default da classe
@@ -67,13 +68,25 @@ public class PrimaryAspect extends JXFrame{
 		flcMyFolderDirectory = new JFileChooser();
 		flcMyFolderDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
-		btnChoseMyFolder = new JXButton(criarImageIcon("/images/Open.png", "Escolher Arquivos"));
+		btnChoseMyFolder = new JXButton(SwingUtil.criarImageIcon("/images/Open.png", "Escolher Arquivos"));
 		btnChoseMyFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				btnChoseMyFolder_actionPerformed();
 			}
 		});
-		
+		btnSearchAndDownload = new JXButton(SwingUtil.criarImageIcon("/images/search-24-ns.png", "Buscar arquivos"));
+		btnSearchAndDownload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				SwingUtilities.invokeLater(new Runnable() {
+					 public void run() {
+						 new SearchAndDownloadView(pnlCommandBar);				
+					 }
+				 });
+				
+			}
+		});
 		
 		pnlWindow = new JXPanel(new MigLayout());
 		pnlCommandBar = new JXPanel(new MigLayout());
@@ -86,6 +99,7 @@ public class PrimaryAspect extends JXFrame{
 		pnlLeftSide.setPreferredSize(new Dimension(screenWidth*25/100, screenHeight));
 		pnlLeftSide.setBorder(BorderFactory.createLineBorder(Color.red));
 		
+		pnlCommandBar.add(btnSearchAndDownload);
 		pnlCommandBar.add(btnChoseMyFolder);
 		
 		pnlLeftSide.add(scpFiles,BorderLayout.CENTER);
@@ -96,7 +110,9 @@ public class PrimaryAspect extends JXFrame{
 		pnlWindow.add(pnlLeftSide,"dock west");
 		customizeTblFiles();
 		ct.add(pnlWindow,BorderLayout.CENTER);
-		setExtendedState(JXFrame.MAXIMIZED_BOTH);
+		//setExtendedState(JXFrame.MAXIMIZED_BOTH);
+		setSize(new Dimension(1280,800));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 		
@@ -129,8 +145,7 @@ public class PrimaryAspect extends JXFrame{
 		}
 		if(flcMyFolderDirectory.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
 			file = flcMyFolderDirectory.getSelectedFile();
-			UserPreferences.getInstance().setPrefMyFolderDirectory(file.getAbsolutePath());
-			sharedDirectory = file;
+			UserPreferences.getInstance().setPrefMyFolderDirectory(file.getAbsolutePath());			
 			modelFile.setFiles(new ArrayList<File>(getFilesInDirectory()));
 			updateView();
 		}
@@ -153,19 +168,5 @@ public class PrimaryAspect extends JXFrame{
 		tblFiles.getColumnModel().getColumn(2).setPreferredWidth(30);
 	}
 	
-	/**
-	* Este metodo retorna uma imagem criada baseado na url passada para ele
-	* @return ImageIcon
-	* @author Igor Maldonado Floor
-	*/
-	public  ImageIcon criarImageIcon(String caminho, String descricao) {  
-        java.net.URL imgURL = getClass().getResource(caminho);  
-        if (imgURL != null) {  
-            return new ImageIcon(imgURL, descricao);  
-        } else {  
-            System.err.println("Nao foi possivel carregar o arquivo de imagem: " + caminho);  
-            return null;  
-        }  
-	}
-	
+
 }

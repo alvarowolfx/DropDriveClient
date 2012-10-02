@@ -72,7 +72,7 @@ public class DropDriveFS {
 			for (int i = 0; i < files.length; i++) {
 				if(!files[i].isDirectory() && !files[i].isHidden()){
 					SharedFile sf = new SharedFile();
-					
+					System.out.println(files[i].getName());
 					if(files[i].getName().endsWith(INCOMPLETE)){
 						sf.setPath(files[i].getName().replace(INCOMPLETE, ""));					
 						sf.setComplete(false);
@@ -86,6 +86,7 @@ public class DropDriveFS {
 						sf.setMd5Hash(getMd5OfFile(sf.getPath()));
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
+						continue;
 					}					
 					filesList.add(sf);
 				}
@@ -368,6 +369,7 @@ public class DropDriveFS {
 	}
 
 	public boolean fileIsIncomplete(String path) throws FileNotFoundException{
+		
 		File file = new File(workingDirectory+path);
 		if(!file.exists()){
 			file = new File(workingDirectory+path+INCOMPLETE);

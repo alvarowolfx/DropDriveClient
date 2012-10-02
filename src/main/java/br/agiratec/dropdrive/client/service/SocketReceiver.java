@@ -39,6 +39,7 @@ public class SocketReceiver implements Runnable {
 	}
 
 	private void initReceiver() {
+		
 		// Cria socket com o mediador e avisa que est‡ aberto a ser requisitado
 		SocketAddress mediatorRegisterSocketAddress = new InetSocketAddress("www.agiratec.com.br", 10110);
 		
