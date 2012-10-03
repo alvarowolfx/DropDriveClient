@@ -223,12 +223,12 @@ public class DropDriveFS {
 		
 	}
 	
-	public boolean fileExist(String md5){
+	public SharedFile fileExist(String md5){
 		ArrayList<SharedFile> sharedFiles = getFilesInDirectoryForPublish();
 		for (SharedFile sharedFile : sharedFiles) 
 			if(sharedFile.getMd5Hash().equals(md5))
-				return true;
-		return false;
+				return sharedFile;
+		return null;
 	}
 	
 	public boolean writeChunkOfFile(SharedFileHeader sFile,Chunk c){
