@@ -108,9 +108,10 @@ public class DropDriveFS {
 			for (int i = 0; i < files.length; i++) {
 				if(!files[i].isDirectory() && !files[i].isHidden()){
 					
-					if(!files[i].getName().endsWith(INCOMPLETE))
+					if(!files[i].getName().endsWith(INCOMPLETE)){
 						continue;
-															
+					}
+					
 					filesList.add(loadFileDescriptor(files[i].getName().replace(INCOMPLETE, "")));
 				}
 			}
@@ -342,6 +343,7 @@ public class DropDriveFS {
 				
 			SharedFileHeader sfh = new SharedFileHeader();
 		
+			sfh.setPath(path);
 			sfh.setMd5Hash(descriptor.getProperty("md5Hash"));	
 			sfh.setNumberOfParts(Long.decode(descriptor.getProperty("numberOfParts")));
 			sfh.setSize(Long.decode(descriptor.getProperty("size")));

@@ -31,7 +31,7 @@ public class ResponseConverterUtil {
 				
 				JSONObject jsonFile = jsonFiles.getJSONObject(i);
 				sf.setMd5Hash(jsonFile.getString("md5"));
-				sf.setPath(jsonFile.getJSONArray("filenames").join(","));
+				sf.setPath(jsonFile.getJSONArray("filenames").join(",").replaceAll("\"", ""));
 				sf.setSize(jsonFile.getLong("size"));
 				sf.setNumberOfParts(sf.getSize()/(1024l*1024l));
 				
