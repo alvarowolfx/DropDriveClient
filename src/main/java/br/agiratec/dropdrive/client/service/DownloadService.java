@@ -133,6 +133,7 @@ public class DownloadService implements Runnable{
 					
 					log.info("Worker "+key+" terminou");
 					try {
+																								
 						Integer result = future.get();
 						if(result != -1){
 							
@@ -154,6 +155,9 @@ public class DownloadService implements Runnable{
 						keysToRemove.add(key);
 						e.printStackTrace();
 					} catch (ExecutionException e) {
+						keysToRemove.add(key);
+						e.printStackTrace();
+					} catch (NullPointerException e) {
 						keysToRemove.add(key);
 						e.printStackTrace();
 					}

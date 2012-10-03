@@ -82,16 +82,24 @@ public class DropDriveServiceOrchestrator implements Runnable{
 		
 		while(true){
 			
-			if(downloaderFuture.isCancelled()){
+			if(downloaderFuture.isCancelled() || downloaderFuture.isDone()){			
+				log.info("Levantando denovo o Downloader");
+				downloader = new DownloadService();
 				downloaderFuture = executor.submit(downloader);
 			}
 			if(publisherFuture.isCancelled()){
+				log.info("Levantando denovo o Publisher");
+				publisher = new FilePublisherService();
 				publisherFuture = executor.submit(publisher);
 			}
 			if(receiverFuture.isCancelled()){
+				log.info("Levantando denovo o Receiver");
+				receiver = new SocketReceiver();
 				receiverFuture = executor.submit(receiver);			
 			}
 			if(heartbeatFuture.isCancelled()){
+				log.info("Levantando denovo o Hearbeat Service");
+				heartbeat = new HeartBeatService();
 				heartbeatFuture = executor.submit(heartbeat);
 			}			
 			
