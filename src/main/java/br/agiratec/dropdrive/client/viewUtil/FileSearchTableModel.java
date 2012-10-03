@@ -31,10 +31,12 @@ public class FileSearchTableModel extends AbstractTableModel{
 		}
 		
 		
-		//Marca os arquivos que eu j‡ adicionei
+		//Marca os arquivos que eu j‡ adicionei		
 		for(SharedFile sf : files){
 			if(md5s.contains(sf.getMd5Hash())){
 				sf.setComplete(true);				
+			}else{
+				sf.setComplete(false);
 			}
 		}
 	}

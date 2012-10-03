@@ -21,6 +21,7 @@ import org.jdesktop.swingx.JXTextField;
 
 import br.agiratec.dropdrive.client.application.ClientCommunicator;
 import br.agiratec.dropdrive.client.model.SharedFile;
+import br.agiratec.dropdrive.client.service.DropDriveServiceOrchestrator;
 import br.agiratec.dropdrive.client.util.ResponseConverterUtil;
 import br.agiratec.dropdrive.client.util.SwingUtil;
 import br.agiratec.dropdrive.client.viewUtil.FileSearchTableModel;
@@ -126,6 +127,39 @@ public class SearchAndDownloadView extends JDialog{
 				}
 				
 			}			
+			
+		});
+		
+		btnAddToList.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent evt) {
+				
+				int selectedRow = tblArquivos.getSelectedRow();
+				if(selectedRow >= 0){
+					SharedFile sf = searchModel.getFiles().get(selectedRow);
+					
+					if(!sf.getComplete()){
+						DropDriveServiceOrchestrator.getInstance().addFileToQueue(sf);					
+						JOptionPane.showMessageDialog(null, " Arquivo adicionado a fila de download !!!");
+					}else{
+						JOptionPane.showMessageDialog(null, " O arquivo escolhido j‡ est‡ baixando !!!");
+					}
+					
+				}else{
+					JOptionPane.showMessageDialog(null, "Selecione um arquivo !!!");
+				}
+				
+				
+			}
+		});
+		
+		btnClose.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent evt) {
+				
+				dispose();
+				
+			}
 			
 		});
 		
