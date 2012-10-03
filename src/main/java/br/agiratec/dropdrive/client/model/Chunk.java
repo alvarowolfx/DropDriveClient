@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 public class Chunk implements Serializable,Comparator<Chunk>{
 	
@@ -54,6 +56,12 @@ public class Chunk implements Serializable,Comparator<Chunk>{
 
 	public int compare(Chunk c1, Chunk c2) {		
 		return c1.chunkNumber.compareTo(c2.chunkNumber);
+	}
+	
+	public long getChunkChecksum(){
+		Checksum checksum = new CRC32();
+		checksum.update(content,0,content.length);
+		return checksum.getValue();
 	}
 		
 	

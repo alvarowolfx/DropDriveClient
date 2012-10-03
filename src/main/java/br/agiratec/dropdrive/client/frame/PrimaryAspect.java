@@ -145,7 +145,8 @@ public class PrimaryAspect extends JXFrame{
 		}
 		if(flcMyFolderDirectory.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
 			file = flcMyFolderDirectory.getSelectedFile();
-			UserPreferences.getInstance().setPrefMyFolderDirectory(file.getAbsolutePath());			
+			UserPreferences.getInstance().setPrefMyFolderDirectory(file.getAbsolutePath());
+			DropDriveFS.getInstance().refreshWorkingDirectory();
 			modelFile.setFiles(new ArrayList<File>(getFilesInDirectory()));
 			updateView();
 		}

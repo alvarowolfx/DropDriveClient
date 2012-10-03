@@ -21,6 +21,7 @@ import br.agiratec.dropdrive.client.util.UserPreferences;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+import com.google.common.primitives.Bytes;
 
 public class DropDriveFS {
 
@@ -42,6 +43,9 @@ public class DropDriveFS {
 		return fs;
 	}
 
+	public void refreshWorkingDirectory(){
+		workingDirectory = UserPreferences.getInstance().getPrefMyFolderDirectory();
+	}
 	/**
 	* Este metodo retorna um list de arquivos que obedece a condicao de nao ser diretorio e nem estar oculto
 	* @return List<File>
@@ -139,6 +143,7 @@ public class DropDriveFS {
 				file = new File(workingDirectory+path);
 				String saida = "";
 				try {
+					
 					saida = Files.hash(file,Hashing.md5()).toString();
 				} catch (IOException e) {			
 					e.printStackTrace();
