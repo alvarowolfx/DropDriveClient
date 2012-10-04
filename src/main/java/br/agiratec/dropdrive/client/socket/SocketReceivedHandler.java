@@ -6,13 +6,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import br.agiratec.dropdrive.client.enumerado.RequestType;
 import br.agiratec.dropdrive.client.enumerado.ResponseType;
 import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
 import br.agiratec.dropdrive.client.model.Chunk;
 import br.agiratec.dropdrive.client.model.SharedFile;
+import br.agiratec.dropdrive.client.service.SocketReceiver;
 import br.agiratec.dropdrive.client.util.HexByteUtil;
 
 public class SocketReceivedHandler implements Runnable{
@@ -20,7 +22,7 @@ public class SocketReceivedHandler implements Runnable{
 	private Socket sock = null;
 	private DataInputStream in = null;
 	private DropDriveFS fs = DropDriveFS.getInstance();
-	private Logger log = Logger.getLogger(getClass().getName());
+	private Logger log = Logger.getLogger(SocketReceiver.class);
 	
 	public SocketReceivedHandler(Socket s) {
 		log.info("Usuario conectado com sucesso");
@@ -45,7 +47,7 @@ public class SocketReceivedHandler implements Runnable{
 					break;
 				}
 			} catch (IOException e) {
-				System.out.println("Cliente desconectado");
+				log.debug("Cliente desconectado");
 				e.printStackTrace();
 				return;
 			}

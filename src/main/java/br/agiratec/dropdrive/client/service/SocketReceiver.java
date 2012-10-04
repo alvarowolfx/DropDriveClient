@@ -5,12 +5,15 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+import org.apache.log4j.Logger;
+
 import br.agiratec.dropdrive.client.socket.SocketReceivedHandler;
 import br.agiratec.dropdrive.client.util.UserPreferences;
 import de.htwg_konstanz.in.uce.hp.parallel.target.HolePunchingTarget;
 
 public class SocketReceiver implements Runnable {
 
+	static Logger logger = Logger.getLogger(SocketReceiver.class);
 	private HolePunchingTarget localTarget = null;
 	
 	public SocketReceiver() {		
@@ -24,8 +27,8 @@ public class SocketReceiver implements Runnable {
 			try {
 				Socket sock = localTarget.accept();
 				
-				System.out.println("Alguem se conectou");				
-				System.out.println(sock.getInetAddress());				
+				logger.debug("Alguem se conectou");
+				logger.debug(sock.getInetAddress());				
 				Thread t = new Thread(new SocketReceivedHandler(sock));
 				t.start();
 				
@@ -49,9 +52,9 @@ public class SocketReceiver implements Runnable {
 		//Cadastra com o mediador sua abertura 
 		localTarget = new HolePunchingTarget(mediatorRegisterSocketAddress, computerIdentificator);
 		try {
-			System.out.println("Tentando startar o hole punching com ID "+computerIdentificator);
+			logger.debug("Tentando startar o hole punching com ID "+computerIdentificator);
 			localTarget.start();
-			System.out.println("Iniciado com sucesso");
+			logger.debug("Iniciado com sucesso");
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

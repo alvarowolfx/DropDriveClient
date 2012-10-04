@@ -3,7 +3,8 @@ package br.agiratec.dropdrive.client.service;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import br.agiratec.dropdrive.client.model.SharedFile;
 
@@ -21,7 +22,7 @@ public class DropDriveServiceOrchestrator implements Runnable{
 	private static Future receiverFuture = null;
 	private static Future downloaderFuture = null;
 	
-	private static Logger log = Logger.getLogger("br.agiratec.dropdrive.client.service.DropDriveServiceOrchestrator");
+	private static Logger log = Logger.getLogger(DropDriveServiceOrchestrator.class);
 	private static ExecutorService executor = null;	
 	private static boolean firstTime = true;
 	

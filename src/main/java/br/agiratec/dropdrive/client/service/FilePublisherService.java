@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import br.agiratec.dropdrive.client.application.ClientCommunicator;
 import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
@@ -16,7 +17,7 @@ public class FilePublisherService implements Runnable{
 
 	private ClientCommunicator client = new ClientCommunicator();
 	private Map<String,Boolean> publishedFiles = new HashMap<String,Boolean>();
-	private Logger log = Logger.getLogger(getClass().getName());
+	private Logger log = Logger.getLogger(FilePublisherService.class);
 		
 	public FilePublisherService() {
 		iniciarArquivosPublicados();

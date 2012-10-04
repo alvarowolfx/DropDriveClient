@@ -1,22 +1,18 @@
 package br.agiratec.dropdrive.client.util;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 
 import javax.swing.SwingUtilities;
-import javax.xml.bind.DatatypeConverter;
 
-import de.htwg_konstanz.in.uce.hp.parallel.holepuncher.HolePuncher;
-import de.htwg_konstanz.in.uce.hp.parallel.source.HolePunchingSource;
-import de.htwg_konstanz.in.uce.hp.parallel.source.TargetNotRegisteredException;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
 import br.agiratec.dropdrive.client.frame.PrimaryAspect;
 import br.agiratec.dropdrive.client.service.DropDriveServiceOrchestrator;
-import br.agiratec.dropdrive.client.service.SocketReceiver;
 
 public class Launcher {
 
@@ -101,10 +97,12 @@ public class Launcher {
 		}
 	}
 	
-	
+	static Logger logger = Logger.getLogger(Launcher.class);
 	public static void main(String[] args) {
+		clean();
+		PropertyConfigurator.configure("src/main/java/br/agiratec/dropdrive/client/log/System.properties");
+		logger.debug("Startando Launcher");
 		new Launcher();
-		
 		/*
 		String teste = "56815a93263538dc84299f6888f96479";
 		
@@ -124,6 +122,16 @@ public class Launcher {
 		
 		
 		
+	}
+	
+	public static void clean(){
+		File file = new File("src/main/java/br/agiratec/dropdrive/client/log/System.log");
+		file.delete();
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

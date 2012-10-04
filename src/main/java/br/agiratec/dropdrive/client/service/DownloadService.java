@@ -11,7 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
 import br.agiratec.dropdrive.client.model.SharedFile;
@@ -26,7 +27,7 @@ public class DownloadService implements Runnable{
 	private Map<String,List<Integer>> partsTryingToDownload = new HashMap<String,List<Integer>>();
 	private Map<String,Future<Integer>> workers = new HashMap<String,Future<Integer>>();
 	private ExecutorService executor = null;
-	private Logger log = Logger.getLogger(getClass().getName());
+	private Logger log = Logger.getLogger(DownloadService.class);
 	private Random rand = new Random();
 	
 	public DownloadService(){		

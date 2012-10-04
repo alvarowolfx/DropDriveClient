@@ -2,7 +2,8 @@ package br.agiratec.dropdrive.client.service;
 
 
 
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import br.agiratec.dropdrive.client.application.ClientCommunicator;
 
@@ -13,7 +14,7 @@ public class HeartBeatService implements Runnable{
 	//A cada 1 minuto ele sinaliza ao servidor
 	private final long HEARTBEAT_TIME_MS = 60000;
 	private ClientCommunicator client = new ClientCommunicator();
-	private Logger log = Logger.getLogger(getClass().getName());
+	private Logger log = Logger.getLogger(HeartBeatService.class);
 			
 	public void run() {		
 		while(true){

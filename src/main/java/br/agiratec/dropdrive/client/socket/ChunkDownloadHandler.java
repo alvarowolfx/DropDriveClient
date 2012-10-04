@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import br.agiratec.dropdrive.client.application.ClientCommunicator;
 import br.agiratec.dropdrive.client.enumerado.RequestType;
@@ -38,7 +39,7 @@ public class ChunkDownloadHandler implements Callable<Integer>{
 	private Integer part;
 	private List<String> users;
 	private DropDriveFS fs = DropDriveFS.getInstance();
-	private Logger log = Logger.getLogger(getClass().getName());
+	private Logger log = Logger.getLogger(ChunkDownloadHandler.class);
 
 	public ChunkDownloadHandler(SharedFileHeader sFile, int part) {
 		super();
@@ -68,7 +69,7 @@ public class ChunkDownloadHandler implements Callable<Integer>{
 			Random rand = new Random();
 			int randomUser = rand.nextInt(sf.getUsersOnline().size());
 			sock = source.getSocket(sf.getUsersOnline().get(randomUser),mediatorRegisterSocketAddress);
-			System.out.println(sock.getLocalAddress());
+			log.debug(sock.getLocalAddress());
 			log.info("Localizado o cliente para download!");
 			
 			while(true){

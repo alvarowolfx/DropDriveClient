@@ -61,5 +61,10 @@
   		<artifactId>guava</artifactId>
   		<version>13.0-rc1</version>
   	</dependency>
+  	<dependency>
+  		<groupId>ant</groupId>
+  		<artifactId>ant-apache-log4j</artifactId>
+  		<version>1.6.5</version>
+  	</dependency>
   </dependencies>
 </project>
