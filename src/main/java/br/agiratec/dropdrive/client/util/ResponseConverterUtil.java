@@ -33,7 +33,7 @@ public class ResponseConverterUtil {
 				sf.setMd5Hash(jsonFile.getString("md5"));
 				sf.setPath(jsonFile.getJSONArray("filenames").join(",").replaceAll("\"", ""));
 				sf.setSize(jsonFile.getLong("size"));
-				sf.setNumberOfParts(sf.getSize()/(1024l*1024l));
+				sf.setNumberOfParts(1l+sf.getSize()/(1024l*1024l));
 				
 				int usersOnlineLen = jsonFile.getJSONArray("onlineUsers").length();
 				for (int j = 0; j < usersOnlineLen; j++) {					

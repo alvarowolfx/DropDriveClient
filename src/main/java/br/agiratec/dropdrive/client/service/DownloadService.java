@@ -51,12 +51,8 @@ public class DownloadService implements Runnable{
 		
 		log.info("Requisitando adição de arquivo novo");
 		SharedFileHeader sfh = new SharedFileHeader();
-		sfh.setMd5Hash(sf.getMd5Hash());
-		if(sf.getNumberOfParts() == 0l){
-			sfh.setNumberOfParts(sf.getNumberOfParts()+1l);
-		}else{
-			sfh.setNumberOfParts(sf.getNumberOfParts());
-		}		
+		sfh.setMd5Hash(sf.getMd5Hash());		
+		sfh.setNumberOfParts(sf.getNumberOfParts());				
 		sfh.setChunksNumberOfFile(new HashSet<Integer>());
 		sfh.setPath(sf.getPath());
 		sfh.setSize(sf.getSize());
@@ -133,6 +129,7 @@ public class DownloadService implements Runnable{
 				if(future.isDone()){
 					
 					log.info("Worker "+key+" terminou");
+					keysToRemove.add(key);
 					try {
 																								
 						Integer result = future.get();
@@ -148,18 +145,20 @@ public class DownloadService implements Runnable{
 								//Terminou o arquivo tira ele da lista
 								incompleteFiles.remove(k);
 							}
+							
 						}else{
 							String[] keyValue = key.split(":");
 							partsTryingToDownload.get(keyValue[0]).remove(Integer.parseInt(keyValue[1]));
+														
 						}
 					} catch (InterruptedException e) {
-						keysToRemove.add(key);
+						
 						e.printStackTrace();
 					} catch (ExecutionException e) {
-						keysToRemove.add(key);
+						
 						e.printStackTrace();
 					} catch (NullPointerException e) {
-						keysToRemove.add(key);
+						
 						e.printStackTrace();
 					}
 				}

@@ -232,7 +232,7 @@ public class DropDriveFS {
 		return null;
 	}
 	
-	public boolean writeChunkOfFile(SharedFileHeader sFile,Chunk c){
+	public synchronized boolean writeChunkOfFile(SharedFileHeader sFile,Chunk c){
 		
 		File file = new File(workingDirectory+sFile.getPath()+INCOMPLETE);
 		if(!file.exists()){
@@ -259,9 +259,13 @@ public class DropDriveFS {
 				}
 			}
 			if(!exists){
+				//Carrega o arquivo primeiro pra depois salvar
+				sFile = loadFileDescriptor(sFile.getPath());
 				sFile.getChunksNumberOfFile().add(c.getChunkNumber());
-				saveFileDescriptor(sFile);
+				
 				writeChunk(file,c);
+				saveFileDescriptor(sFile);
+				
 				if(sFile.getNumberOfParts().intValue() == sFile.getChunksNumberOfFile().size()){
 					convertIncompleteToComplete(file);
 				}
