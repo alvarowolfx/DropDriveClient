@@ -49,14 +49,10 @@ public class DownloadService implements Runnable{
 	
 	public synchronized void addFile(SharedFile sf){
 		
-		log.info("Requisitando adição de arquivo novo");
+		log.info("Requisitando adiÔøΩÔøΩo de arquivo novo");
 		SharedFileHeader sfh = new SharedFileHeader();
 		sfh.setMd5Hash(sf.getMd5Hash());
-		if(sf.getNumberOfParts() == 0l){
-			sfh.setNumberOfParts(sf.getNumberOfParts()+1l);
-		}else{
-			sfh.setNumberOfParts(sf.getNumberOfParts());
-		}		
+		sfh.setNumberOfParts(sf.getNumberOfParts());
 		sfh.setChunksNumberOfFile(new HashSet<Integer>());
 		sfh.setPath(sf.getPath());
 		sfh.setSize(sf.getSize());
@@ -111,7 +107,7 @@ public class DownloadService implements Runnable{
 					}
 					
 				}else{
-					log.info("Não existem arquivos para download");
+					log.info("NÔøΩo existem arquivos para download");
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {				
@@ -129,9 +125,9 @@ public class DownloadService implements Runnable{
 			for(String key : workers.keySet()){
 				
 				Future<Integer> future = workers.get(key);
-				log.info("Worker "+key+" está trabalhando ?");
+				log.info("Worker "+key+" estÔøΩ trabalhando ?");
 				if(future.isDone()){
-					
+					keysToRemove.add(key);
 					log.info("Worker "+key+" terminou");
 					try {
 																								
@@ -153,13 +149,10 @@ public class DownloadService implements Runnable{
 							partsTryingToDownload.get(keyValue[0]).remove(Integer.parseInt(keyValue[1]));
 						}
 					} catch (InterruptedException e) {
-						keysToRemove.add(key);
 						e.printStackTrace();
 					} catch (ExecutionException e) {
-						keysToRemove.add(key);
 						e.printStackTrace();
 					} catch (NullPointerException e) {
-						keysToRemove.add(key);
 						e.printStackTrace();
 					}
 				}

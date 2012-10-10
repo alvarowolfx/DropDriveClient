@@ -23,6 +23,7 @@ import br.agiratec.dropdrive.client.model.SharedFile;
 import br.agiratec.dropdrive.client.model.SharedFileHeader;
 import br.agiratec.dropdrive.client.util.HexByteUtil;
 import br.agiratec.dropdrive.client.util.ResponseConverterUtil;
+import br.agiratec.dropdrive.client.util.UserPreferences;
 import de.htwg_konstanz.in.uce.hp.parallel.source.HolePunchingSource;
 import de.htwg_konstanz.in.uce.hp.parallel.source.TargetNotRegisteredException;
 
@@ -67,8 +68,24 @@ public class ChunkDownloadHandler implements Callable<Integer>{
 				}
 			}
 			Random rand = new Random();
-			int randomUser = rand.nextInt(sf.getUsersOnline().size());
-			sock = source.getSocket(sf.getUsersOnline().get(randomUser),mediatorRegisterSocketAddress);
+			List<String> usersOnline = sf.getUsersOnline();
+			int randomUser;
+			String userChossed = null;
+			String user = null;
+			while(usersOnline.size() > 0){
+				randomUser = rand.nextInt(sf.getUsersOnline().size());
+				user = usersOnline.get(randomUser);
+				if(!user.equals(UserPreferences.getInstance().getComputerIdentifier())){
+					userChossed = user;
+					break;
+				}
+				usersOnline.remove(user);
+			}
+			if(userChossed == null){
+				return -1;
+			}
+			
+			sock = source.getSocket(userChossed,mediatorRegisterSocketAddress);
 			log.debug(sock.getLocalAddress());
 			log.info("Localizado o cliente para download!");
 			
@@ -131,7 +148,7 @@ public class ChunkDownloadHandler implements Callable<Integer>{
 			sock.close();
 			return part;
 		case CHUNK_NOT_FOUND:
-			log.info("Parte "+part+" do arquivo n‹o foi encontrada.");
+			log.info("Parte "+part+" do arquivo nï¿½o foi encontrada.");
 			sock.close();
 			return -1;
 		case FILE_NOT_FOUND:

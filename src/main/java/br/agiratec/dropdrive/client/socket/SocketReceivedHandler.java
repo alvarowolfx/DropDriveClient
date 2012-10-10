@@ -1,7 +1,6 @@
 package br.agiratec.dropdrive.client.socket;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -65,7 +64,7 @@ public class SocketReceivedHandler implements Runnable{
 		String md5 = HexByteUtil.getHexStringFromByteArray(md5Array);
 		SharedFile sharedFile = fs.fileExist(md5);
 		if(sharedFile == null){
-			DataOutputStream out = new DataOutputStream(sock.getOutputStream());
+			OutputStream out = sock.getOutputStream();
 			out.write(ResponseType.FILE_NOT_FOUND.getValor());
 			out.flush();
 			return;
@@ -79,7 +78,7 @@ public class SocketReceivedHandler implements Runnable{
 		log.info("Part que chegou " + chunkNumber);
 		Chunk chunk = fs.readChunkOfFile(sharedFile.getPath(), chunkNumber-1);
 		if(chunk == null){
-			DataOutputStream out = new DataOutputStream(sock.getOutputStream());
+			OutputStream out = sock.getOutputStream();
 			out.write(ResponseType.CHUNK_NOT_FOUND.getValor());
 			out.flush();
 			return;
