@@ -144,15 +144,20 @@ public class DownloadService implements Runnable{
 								//Terminou o arquivo tira ele da lista
 								incompleteFiles.remove(k);
 							}
+							
 						}else{
 							String[] keyValue = key.split(":");
 							partsTryingToDownload.get(keyValue[0]).remove(Integer.parseInt(keyValue[1]));
+														
 						}
 					} catch (InterruptedException e) {
+						
 						e.printStackTrace();
 					} catch (ExecutionException e) {
+						
 						e.printStackTrace();
 					} catch (NullPointerException e) {
+						
 						e.printStackTrace();
 					}
 				}

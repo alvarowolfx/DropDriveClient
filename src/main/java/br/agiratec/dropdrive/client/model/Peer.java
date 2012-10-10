@@ -4,29 +4,22 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-@Entity
 @XmlRootElement
 @JsonIgnoreProperties("password")
 public class Peer implements Serializable{
 	
-	@Id
-	@GeneratedValue
 	private Long id;
 	private String name;
 	private String login;
 	private String password;
 	private String email;	
 		
-	@OneToMany(mappedBy = "deviceOwner")
+
 	private Set<Device> devices = new HashSet<Device>();
 
 	public Peer(){

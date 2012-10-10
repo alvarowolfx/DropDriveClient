@@ -4,28 +4,21 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@Entity
+
 @XmlRootElement
 public class Device implements Serializable{
 	
-	@Id
-	@GeneratedValue
 	private Long id;
 	private String lastRealIPAdress;
 	private String name;
 	
-	@ManyToOne
+
 	private Peer deviceOwner;
 	
-	@ManyToMany()
+
 	private Set<Chunk> chunksOfFiles = new HashSet<Chunk>();
 	
 	public Long getId() {
