@@ -19,7 +19,7 @@ import org.jdesktop.swingx.JXTextField;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import br.agiratec.dropdrive.client.application.ClientCommunicator;
+import br.agiratec.dropdrive.client.application.DropDriveServiceClient;
 import br.agiratec.dropdrive.client.application.CommunicatorFactory;
 import br.agiratec.dropdrive.client.util.Launcher;
 import br.agiratec.dropdrive.client.util.Messages;
@@ -143,7 +143,7 @@ public class CreateUserView extends JXDialog{
 		String answer = txtAnswer.getText();
 		if(login.length()>0 && name.length()>0 && password.length() >0 && email.length() >0 && question.length() >0
 				&& answer.length()>0){
-			ClientCommunicator communicator = CommunicatorFactory.getCommunicator();
+			DropDriveServiceClient communicator = CommunicatorFactory.getCommunicator();
 			processResponse(communicator.createUser(login, name, password, email, question, answer));
 		}else{
 			String message = "";

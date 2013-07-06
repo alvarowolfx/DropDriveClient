@@ -9,13 +9,13 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import br.agiratec.dropdrive.client.application.ClientCommunicator;
+import br.agiratec.dropdrive.client.application.DropDriveServiceClient;
 import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
 import br.agiratec.dropdrive.client.model.SharedFile;
 
 public class FilePublisherService implements Runnable{
 
-	private ClientCommunicator client = new ClientCommunicator();
+	private DropDriveServiceClient client = new DropDriveServiceClient();
 	private Map<String,Boolean> publishedFiles = new HashMap<String,Boolean>();
 	private Logger log = Logger.getLogger(FilePublisherService.class);
 		

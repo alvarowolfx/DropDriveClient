@@ -17,7 +17,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-public class ClientCommunicator implements Communicator{
+public class DropDriveServiceClient implements Communicator{
 
 	ClientConfig config;
 	Client client;
@@ -172,7 +172,7 @@ public class ClientCommunicator implements Communicator{
 	* Construtor padr‹o da classe
 	*@author Igor Maldonado Floor
 	*/
-	public ClientCommunicator(){
+	public DropDriveServiceClient(){
 		config = new DefaultClientConfig();
 		client = Client.create(config);
 		client.setConnectTimeout(5000);

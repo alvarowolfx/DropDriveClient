@@ -21,7 +21,6 @@ import br.agiratec.dropdrive.client.util.UserPreferences;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-import com.google.common.primitives.Bytes;
 
 public class DropDriveFS {
 
@@ -280,6 +279,7 @@ public class DropDriveFS {
 	
 	}
 	
+
 	private void writeChunk(File file, Chunk c) {
 		int number = c.getChunkNumber()-1;		
 		
@@ -322,9 +322,11 @@ public class DropDriveFS {
 		
 		try {
 			File arquivo = new File(workingDirectory+OCULT_FILE_STRING+sFile.getPath());
+			
 			if(!arquivo.exists()){
 				arquivo.createNewFile();
 			}
+			
 			FileOutputStream fos = new FileOutputStream(arquivo);
 			descriptor.store(fos,"Descriptor of Incomplete file in DropDrive");			
 			fos.close();

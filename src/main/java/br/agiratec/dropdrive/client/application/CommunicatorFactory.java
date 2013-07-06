@@ -2,15 +2,15 @@ package br.agiratec.dropdrive.client.application;
 
 
 public class CommunicatorFactory {
-	private static ClientCommunicator communicator;
+	private static DropDriveServiceClient communicator;
 	
 	private CommunicatorFactory(){
 		
 	}
 	
-	public static ClientCommunicator getCommunicator(){
+	public static DropDriveServiceClient getCommunicator(){
 		if(communicator == null){
-			communicator = new ClientCommunicator();
+			communicator = new DropDriveServiceClient();
 		}
 		return communicator;
 	}

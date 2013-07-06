@@ -21,7 +21,7 @@ import br.agiratec.dropdrive.client.socket.ChunkDownloadHandler;
 
 public class DownloadService implements Runnable{
 
-	private static final int DOWNLOAD_THREAD_LIMIT = Runtime.getRuntime().availableProcessors()*4;
+	private static final int DOWNLOAD_THREAD_LIMIT = Runtime.getRuntime().availableProcessors()*20;
 	
 	private Map<String,SharedFileHeader> incompleteFiles = new ConcurrentHashMap<String,SharedFileHeader>();
 	private Map<String,List<Integer>> partsTryingToDownload = new HashMap<String,List<Integer>>();

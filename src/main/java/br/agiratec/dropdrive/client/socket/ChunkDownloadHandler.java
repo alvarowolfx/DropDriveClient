@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
-import br.agiratec.dropdrive.client.application.ClientCommunicator;
+import br.agiratec.dropdrive.client.application.DropDriveServiceClient;
 import br.agiratec.dropdrive.client.enumerado.RequestType;
 import br.agiratec.dropdrive.client.enumerado.ResponseType;
 import br.agiratec.dropdrive.client.filesystem.DropDriveFS;
@@ -59,7 +59,7 @@ public class ChunkDownloadHandler implements Callable<Integer>{
 		HolePunchingSource source = new HolePunchingSource();
 		try {
 			SharedFile sf = null;
-			ClientCommunicator client = new ClientCommunicator();
+			DropDriveServiceClient client = new DropDriveServiceClient();
 			ArrayList<SharedFile> sharedFiles = (ArrayList<SharedFile>) ResponseConverterUtil.jsonSearchResponseToList(client.searchForFile(sFile.getPath()));
 			for (SharedFile sharedFile : sharedFiles) {
 				if(sharedFile.getMd5Hash().equals(sFile.getMd5Hash())){

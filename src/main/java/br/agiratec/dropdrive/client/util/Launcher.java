@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -103,24 +102,7 @@ public class Launcher {
 		PropertyConfigurator.configure("src/main/java/br/agiratec/dropdrive/client/log/System.properties");
 		logger.debug("Startando Launcher");
 		new Launcher();
-		/*
-		String teste = "56815a93263538dc84299f6888f96479";
-		
-		System.out.println("Antes");
-		System.out.println(teste);
-		
-		byte[] array = DatatypeConverter.parseHexBinary(teste);
-		System.out.println("Byte array");
-		System.out.println(array);
-		
-		
-		String volta = DatatypeConverter.printHexBinary(array).toLowerCase();
-		
-		System.out.println("Volta est‡ igual ?");
-		System.out.println(volta);
-		*/		
-		
-		
+				
 		
 	}
 	

@@ -28,7 +28,7 @@ import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
 
-import br.agiratec.dropdrive.client.application.ClientCommunicator;
+import br.agiratec.dropdrive.client.application.DropDriveServiceClient;
 import br.agiratec.dropdrive.client.application.CommunicatorFactory;
 import br.agiratec.dropdrive.client.util.Launcher;
 import br.agiratec.dropdrive.client.util.Messages;
@@ -248,7 +248,7 @@ public class LoginView extends JXFrame implements FrameBefore{
 	* @author Igor Maldonado Floor
 	*/
 	private void updateStatusConnection(){
-		ClientCommunicator communicator = CommunicatorFactory.getCommunicator();
+		DropDriveServiceClient communicator = CommunicatorFactory.getCommunicator();
 		if(communicator.isConnectingWithServer()){
 			lblStatusConnection.setIcon(connectionOn);
 		}else{
@@ -286,7 +286,7 @@ public class LoginView extends JXFrame implements FrameBefore{
 	* @author Igor Maldonado Floor
 	*/
 	private boolean loginSucessful(){
-		ClientCommunicator communicator = CommunicatorFactory.getCommunicator();
+		DropDriveServiceClient communicator = CommunicatorFactory.getCommunicator();
 		@SuppressWarnings("deprecation")
 		ClientResponse response = communicator.login(txtLogin.getText(), txpPassword.getText());
 		if(response != null && response.getStatus() == Response.Status.OK.getStatusCode()){

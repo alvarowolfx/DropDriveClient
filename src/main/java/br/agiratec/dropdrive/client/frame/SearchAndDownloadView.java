@@ -19,7 +19,7 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTextField;
 
-import br.agiratec.dropdrive.client.application.ClientCommunicator;
+import br.agiratec.dropdrive.client.application.DropDriveServiceClient;
 import br.agiratec.dropdrive.client.model.SharedFile;
 import br.agiratec.dropdrive.client.service.DropDriveServiceOrchestrator;
 import br.agiratec.dropdrive.client.util.ResponseConverterUtil;
@@ -38,11 +38,11 @@ public class SearchAndDownloadView extends JDialog{
 	private JXLabel lblSearch;
 	private JXPanel pnlNorth,pnlCenter,pnlSouth;
 	private FileSearchTableModel searchModel;
-	private ClientCommunicator client;
+	private DropDriveServiceClient client;
 	
 	public SearchAndDownloadView(JComponent content) {
 		//super(content);
-		client = new ClientCommunicator();
+		client = new DropDriveServiceClient();
 		initGUI(content.getX(),content.getY(),content.getWidth());
 			
 	}

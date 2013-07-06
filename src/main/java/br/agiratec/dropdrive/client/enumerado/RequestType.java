@@ -2,7 +2,8 @@ package br.agiratec.dropdrive.client.enumerado;
 
 public enum RequestType {
 	
-	REQUEST_BLOCK((byte)0xaa);	
+	REQUEST_BLOCK((byte)0xaa),
+	REQHEST_CHECKSUM((byte)0xee);
 	
 	private byte valor;
 	RequestType(byte valor){
